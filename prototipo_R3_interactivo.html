@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Prototipo interactivo — Reto 3 IPO</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+
+body{
+  font-family:-apple-system,"Segoe UI",Arial,sans-serif;
+  background:#c0c0c0;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:20px 0 40px;
+}
+.page-header{
+  font-size:12px;color:#555;text-align:center;
+  margin-bottom:14px;line-height:1.6;
+}
+
+/* PHONE */
+.phone{
+  width:375px;height:720px;
+  border:2px solid #111;border-radius:14px;
+  background:#fff;overflow:hidden;
+  position:relative;
+  box-shadow:0 10px 40px rgba(0,0,0,.3);
+}
+@media(max-width:400px){
+  body{padding:0;background:#fff;}
+  .page-header{display:none;}
+  .phone{width:100vw;height:100dvh;border:none;border-radius:0;box-shadow:none;}
+}
+
+/* SCREENS */
+.screen{
+  display:none;flex-direction:column;
+  position:absolute;inset:0;background:#fff;
+}
+.screen.active{display:flex;}
+
+/* STATUS BAR */
+.sbar{
+  background:#111;color:#fff;
+  padding:6px 14px;font-size:11px;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-shrink:0;
+}
+
+/* NAV BAR */
+.nbar{
+  background:#f5f5f5;border-bottom:1px solid #ddd;
+  padding:10px 14px;
+  display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;min-height:44px;
+}
+.nbar-title{font-weight:700;font-size:15px;}
+.nbar-back{font-size:13px;color:#1a56b0;cursor:pointer;display:flex;align-items:center;gap:3px;}
+.nbar-action{font-size:12px;color:#1a56b0;cursor:pointer;}
+
+/* CONTENT */
+.content{flex:1;overflow-y:auto;padding:12px 14px;-webkit-overflow-scrolling:touch;}
+
+/* BOTTOM NAV */
+.bnav{border-top:1px solid #ddd;background:#f9f9f9;display:flex;padding:5px 0 7px;flex-shrink:0;}
+.bitem{flex:1;text-align:center;font-size:10px;color:#999;cursor:pointer;padding:3px 0;}
+.bitem.active{color:#111;font-weight:700;}
+.bicon{display:block;font-size:17px;margin-bottom:1px;}
+
+/* TYPOGRAPHY */
+.stitle{font-weight:700;font-size:13px;margin:12px 0 6px;color:#111;}
+.stitle:first-child{margin-top:0;}
+
+/* SEARCH */
+.searchbox{border:1.5px solid #ccc;background:#f9f9f9;padding:9px 12px;
+  margin-bottom:12px;font-size:13px;color:#aaa;border-radius:6px;}
+
+/* CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.chip{border:1.5px solid #ccc;background:#fff;padding:5px 12px;
+  font-size:12px;border-radius:20px;cursor:pointer;user-select:none;
+  transition:background .15s,color .15s,border-color .15s;}
+.chip.active{background:#111;color:#fff;border-color:#111;}
+
+/* BOOK CARD (list) */
+.bcard{
+  border:1px solid #e0e0e0;background:#fafafa;
+  padding:10px;margin-bottom:8px;
+  display:flex;gap:10px;border-radius:6px;
+  cursor:pointer;transition:background .15s;
+}
+.bcard:hover:not(.dimmed){background:#f0f0f0;}
+.bcard.dimmed{opacity:.4;cursor:default;}
+.cov-sm{
+  width:44px;min-height:62px;background:#ddd;border:1px solid #ccc;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;color:#777;text-align:center;line-height:1.3;
+  flex-shrink:0;border-radius:3px;
+}
+.bi{flex:1;min-width:0;}
+.bt{font-weight:700;font-size:13px;margin-bottom:1px;}
+.ba{font-size:11px;color:#777;margin-bottom:5px;}
+.btags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:4px;}
+.btag{border:1px solid #ccc;background:#eee;padding:1px 7px;font-size:10px;border-radius:10px;}
+.bstars{font-size:11px;color:#666;margin-bottom:4px;}
+.breason{
+  border-left:3px solid #d4a800;background:#fffbe6;
+  padding:3px 8px;font-size:10px;color:#666;font-style:italic;
+  line-height:1.4;border-radius:0 3px 3px 0;
+}
+.added-lbl{font-size:11px;font-weight:700;color:#2a7a2a;margin-top:4px;display:none;}
+.bcard.dimmed .added-lbl{display:block;}
+
+/* BOOK DETAIL */
+.cov-lg{
+  width:90px;height:128px;background:#ddd;border:1px solid #ccc;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:#777;margin:4px auto 10px;border-radius:3px;
+}
+.d-title{font-weight:700;font-size:16px;text-align:center;margin-bottom:2px;}
+.d-author{font-size:12px;color:#777;text-align:center;margin-bottom:8px;}
+.d-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-bottom:8px;}
+.stars-c{text-align:center;font-size:12px;color:#666;margin-bottom:10px;}
+.why{
+  border:1px solid #d4a800;border-left-width:3px;background:#fffbe6;
+  padding:8px 10px;font-size:12px;margin-bottom:10px;border-radius:0 6px 6px 0;
+}
+.why-t{font-weight:700;font-size:12px;margin-bottom:3px;}
+.cw-wrap{border:1px solid #e0e0e0;background:#f9f9f9;margin-bottom:10px;border-radius:6px;overflow:hidden;}
+.cw-h{
+  padding:9px 12px;font-size:12px;color:#555;cursor:pointer;
+  display:flex;justify-content:space-between;align-items:center;user-select:none;
+}
+.cw-b{display:none;padding:0 12px 9px;font-size:11px;color:#666;line-height:1.5;}
+
+/* BUTTONS */
+.btn{
+  display:block;width:100%;padding:11px 14px;
+  font-size:13px;font-weight:700;text-align:center;
+  border-radius:6px;cursor:pointer;margin-bottom:8px;
+  border:1.5px solid #111;background:#fff;color:#111;
+  transition:opacity .15s;
+}
+.btn:active{opacity:.7;}
+.btn-p{background:#111;color:#fff;}
+.btn-w{border-color:#c0a000;color:#7a4800;background:#fffbe6;}
+.btn-sm{padding:8px 14px;font-size:12px;}
+
+/* TOAST */
+.toast{
+  position:absolute;bottom:56px;left:0;right:0;
+  background:#111;color:#fff;padding:10px 14px;
+  display:none;align-items:center;justify-content:space-between;
+  font-size:12px;z-index:100;
+}
+.toast.show{display:flex;}
+.t-undo{font-weight:700;color:#8bb8f0;cursor:pointer;padding:4px 0;}
+
+/* PROGRESS */
+.prog-row{display:flex;justify-content:space-between;font-size:11px;color:#666;margin-bottom:4px;}
+.prog-track{height:6px;background:#e8e8e8;border-radius:3px;margin-bottom:10px;overflow:hidden;}
+.prog-fill{height:100%;background:#111;border-radius:3px;transition:width .4s ease;}
+
+/* READING CARD */
+.rcard{border:1px solid #e0e0e0;background:#fafafa;padding:12px;margin-bottom:10px;border-radius:6px;}
+.rcard-book{display:flex;gap:10px;margin-bottom:10px;}
+
+/* REMINDER BOX */
+.rem-box{border:1px solid #b0c8f0;background:#eef3fb;padding:10px 12px;margin-bottom:10px;border-radius:6px;}
+.rem-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.rem-title{font-weight:700;font-size:13px;}
+.rem-txt{font-size:12px;color:#555;}
+.rem-edit{font-size:12px;color:#1a56b0;cursor:pointer;margin-left:6px;}
+
+/* GOAL BOX */
+.goal-box{border:1px solid #b8dbb8;background:#f0faf0;padding:10px 12px;margin-bottom:10px;border-radius:6px;display:flex;align-items:center;gap:12px;}
+.goal-ring{width:52px;height:52px;border:3px solid #2a7a2a;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;color:#2a7a2a;}
+.goal-info{font-size:12px;color:#555;line-height:1.5;}
+.goal-info strong{font-size:13px;color:#111;display:block;}
+
+/* TOGGLE */
+.toggle{width:40px;height:22px;border:1.5px solid #ccc;border-radius:11px;background:#ccc;position:relative;cursor:pointer;transition:background .2s,border-color .2s;flex-shrink:0;}
+.toggle.on{background:#111;border-color:#111;}
+.toggle::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;background:#fff;border-radius:50%;transition:left .2s;}
+.toggle.on::after{left:20px;}
+
+/* PAGE INPUT */
+.pg-row{display:flex;border:1.5px solid #111;border-radius:6px;overflow:hidden;margin-bottom:8px;}
+.pg-btn{width:52px;background:#f0f0f0;font-size:22px;font-weight:300;text-align:center;padding:8px 0;cursor:pointer;user-select:none;flex-shrink:0;transition:background .1s;}
+.pg-btn:active{background:#ddd;}
+.pg-div{width:1px;background:#111;}
+.pg-val{flex:1;text-align:center;font-size:22px;font-weight:700;padding:8px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.2;}
+.pg-unit{font-size:10px;font-weight:400;color:#888;}
+
+/* MODE TOGGLE */
+.mode-tog{display:flex;border:1.5px solid #ccc;border-radius:6px;overflow:hidden;margin-bottom:10px;}
+.mode-opt{flex:1;text-align:center;padding:7px;font-size:12px;font-weight:700;color:#888;cursor:pointer;background:#f5f5f5;user-select:none;transition:background .15s,color .15s;}
+.mode-opt.active{background:#111;color:#fff;}
+
+/* NOTE */
+.note-lbl{font-size:12px;font-weight:700;margin-bottom:4px;color:#111;}
+.note-priv{font-size:10px;color:#888;font-weight:400;margin-left:4px;}
+.note-area{border:1.5px solid #ccc;background:#fafafa;padding:8px 10px;font-size:12px;color:#aaa;min-height:54px;margin-bottom:10px;width:100%;font-family:inherit;border-radius:6px;resize:none;}
+.note-area:focus{outline:none;border-color:#111;color:#111;}
+
+/* MODAL */
+.modal{position:absolute;inset:0;background:rgba(0,0,0,.5);display:none;align-items:flex-end;z-index:200;}
+.modal.show{display:flex;}
+.msheet{background:#fff;width:100%;border-top:2px solid #111;border-radius:14px 14px 0 0;padding:16px 14px 22px;}
+.mhandle{width:36px;height:4px;background:#ccc;border-radius:2px;margin:0 auto 14px;}
+.mtitle{font-weight:700;font-size:15px;margin-bottom:6px;}
+.mbody{font-size:12px;color:#666;line-height:1.6;margin-bottom:14px;}
+
+/* DAYS */
+.days-row{display:flex;gap:4px;margin-bottom:10px;}
+.day{flex:1;border:1.5px solid #ccc;background:#f5f5f5;text-align:center;padding:6px 0;font-size:11px;font-weight:700;color:#888;border-radius:4px;cursor:pointer;user-select:none;transition:background .15s,color .15s;}
+.day.active{background:#111;color:#fff;border-color:#111;}
+
+/* TIME PICKER */
+.tpicker{display:flex;gap:8px;align-items:stretch;margin-bottom:10px;}
+.tunit{flex:1;display:flex;flex-direction:column;align-items:center;border:1.5px solid #ccc;border-radius:6px;overflow:hidden;}
+.tarr{padding:5px;font-size:15px;cursor:pointer;width:100%;text-align:center;background:#f5f5f5;border:none;user-select:none;}
+.tarr:active{background:#e8e8e8;}
+.tval{font-size:26px;font-weight:700;padding:6px 0;letter-spacing:1px;}
+.tlbl{font-size:10px;color:#aaa;padding-bottom:4px;}
+.tcolon{font-size:28px;font-weight:700;align-self:center;padding-top:4px;}
+
+/* NOTIF PREVIEW */
+.nprev{border:1.5px solid #ddd;background:#f5f5f5;padding:10px;border-radius:6px;margin-bottom:10px;}
+.nprev-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#999;margin-bottom:6px;font-weight:700;}
+.ncard{border:1px solid #ddd;background:#fff;padding:8px 10px;border-radius:8px;}
+.ncard-t{font-weight:700;font-size:12px;margin-bottom:2px;}
+.ncard-b{font-size:11px;color:#666;line-height:1.4;}
+.nprev-sub{font-size:10px;color:#aaa;margin-top:5px;}
+
+/* STATS */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.scard{border:1px solid #e0e0e0;background:#fafafa;padding:10px;border-radius:6px;text-align:center;}
+.sval{font-size:24px;font-weight:700;color:#111;display:block;}
+.slbl{font-size:10px;color:#888;margin-top:2px;}
+.ssub{font-size:11px;color:#2a7a2a;margin-top:4px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:12px;}
+.bar-lbl{width:110px;color:#555;flex-shrink:0;}
+.bar-track{flex:1;height:10px;background:#eee;border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;background:#111;border-radius:3px;}
+.bar-pct{width:32px;text-align:right;color:#888;font-size:11px;}
+
+/* PLUS CARD */
+.plus-card{border:1px solid #d4a800;background:#fafafa;border-radius:6px;margin-bottom:8px;overflow:hidden;}
+.plus-hdr{padding:10px 12px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;user-select:none;}
+.plus-t{font-weight:700;font-size:13px;}
+.plus-badge{background:#fdf3e0;color:#7a4800;border:1px solid #d4a800;padding:2px 7px;font-size:10px;font-weight:700;border-radius:3px;}
+.plus-body{display:none;padding:0 12px 10px;font-size:12px;color:#666;line-height:1.5;border-top:1px solid #ece0b0;}
+.plus-body.open{display:block;}
+
+/* HOME */
+.home-logo{text-align:center;padding:18px 0 12px;}
+.hlogo-m{font-size:34px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.hlogo-s{font-size:11px;color:#888;margin-top:3px;}
+.hcard{border:1px solid #e0e0e0;background:#fafafa;padding:12px;margin-bottom:10px;border-radius:6px;cursor:pointer;transition:background .15s;}
+.hcard:hover{background:#f0f0f0;}
+.hcard-t{font-weight:700;font-size:14px;margin-bottom:3px;}
+.hcard-s{font-size:12px;color:#777;margin-bottom:7px;}
+.hcard-a{font-size:12px;color:#1a56b0;font-weight:700;}
+.hcur{display:flex;gap:10px;align-items:center;border:1px solid #ddd;background:#fff;padding:8px 10px;border-radius:6px;margin-bottom:8px;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<p class="page-header">
+  <strong>Prototipo interactivo — Reto 3 IPO</strong><br>
+  App de lectura · R1 Descubrimiento · R3 Pausa y continuidad
+</p>
+
+<div class="phone">
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA 0 — HOME
+════════════════════════════════════════════════ -->
+<div class="screen active" id="s-home">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="content">
+    <div class="home-logo">
+      <div class="hlogo-m">LÉ</div>
+      <div class="hlogo-s">Tu app de lectura</div>
+    </div>
+
+    <div class="stitle">Continúa leyendo</div>
+    <div class="hcur" onclick="go('s-r3a')">
+      <div class="cov-sm" style="width:40px;height:56px;">PORT<br>ADA</div>
+      <div style="flex:1;">
+        <div class="bt">El nombre del viento</div>
+        <div class="ba">Patrick Rothfuss</div>
+        <div class="prog-row" style="margin-top:4px;margin-bottom:3px;">
+          <span id="h-pages">95 de 320 páginas</span>
+          <span id="h-pct" style="font-weight:700;">29%</span>
+        </div>
+        <div class="prog-track" style="margin-bottom:0;">
+          <div class="prog-fill" id="h-prog" style="width:29%;"></div>
+        </div>
+      </div>
+      <span style="font-size:20px;color:#ccc;">›</span>
+    </div>
+
+    <div class="stitle" style="margin-top:14px;">Descubre tu próxima lectura</div>
+    <div class="hcard" onclick="go('s-r1a')">
+      <div class="hcard-t">🔍 Descubrir libros</div>
+      <div class="hcard-s">Filtra por estado de ánimo, género y ritmo. Recomendaciones con justificación.</div>
+      <div class="hcard-a">Ir a Descubrir →</div>
+    </div>
+
+    <div class="stitle">Gestión de lectura</div>
+    <div class="hcard" onclick="go('s-r3a')">
+      <div class="hcard-t">📖 Mi lectura actual</div>
+      <div class="hcard-s">Progreso, recordatorios configurables y objetivo semanal.</div>
+      <div class="hcard-a">Ver Mi lectura →</div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="bitem active"><span class="bicon">⌂</span>Inicio</div>
+    <div class="bitem" onclick="go('s-r1a')"><span class="bicon">◎</span>Descubrir</div>
+    <div class="bitem" onclick="go('s-r3a')"><span class="bicon">☰</span>Biblioteca</div>
+    <div class="bitem" onclick="go('s-r3d')"><span class="bicon">◷</span>Perfil</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA R1A — DESCUBRIR
+════════════════════════════════════════════════ -->
+<div class="screen" id="s-r1a">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="nbar">
+    <span class="nbar-title">Descubrir</span>
+    <span class="nbar-action">🔍</span>
+  </div>
+  <div class="content">
+    <div class="searchbox">Buscar título, autor o tema...</div>
+
+    <div class="stitle">¿Cómo te sientes hoy?</div>
+    <div class="chips" id="mood-chips">
+      <span class="chip active" data-mood="aventurero" onclick="selectMood(this)">Aventurero</span>
+      <span class="chip" data-mood="reflexivo" onclick="selectMood(this)">Reflexivo</span>
+      <span class="chip" data-mood="misterioso" onclick="selectMood(this)">Misterioso</span>
+      <span class="chip" data-mood="emotivo" onclick="selectMood(this)">Emotivo</span>
+      <span class="chip" data-mood="oscuro" onclick="selectMood(this)">Oscuro</span>
+      <span class="chip" data-mood="relajante" onclick="selectMood(this)">Relajante</span>
+    </div>
+
+    <div class="stitle">Género</div>
+    <div class="chips">
+      <span class="chip" onclick="this.classList.toggle('active')">Fantasía</span>
+      <span class="chip" onclick="this.classList.toggle('active')">Literatura</span>
+      <span class="chip" onclick="this.classList.toggle('active')">Ciencia ficción</span>
+      <span class="chip" onclick="this.classList.toggle('active')">Histórica</span>
+      <span class="chip" onclick="this.classList.toggle('active')">Terror</span>
+    </div>
+
+    <div class="stitle">Para ti</div>
+    <div id="book-list"></div>
+  </div>
+
+  <div class="toast" id="toast-r1"><span>✓ Añadido a «Quiero leer»</span><span class="t-undo" onclick="undoAdd()">DESHACER</span></div>
+
+  <div class="bnav">
+    <div class="bitem" onclick="go('s-home')"><span class="bicon">⌂</span>Inicio</div>
+    <div class="bitem active"><span class="bicon">◎</span>Descubrir</div>
+    <div class="bitem" onclick="go('s-r3a')"><span class="bicon">☰</span>Biblioteca</div>
+    <div class="bitem" onclick="go('s-r3d')"><span class="bicon">◷</span>Perfil</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA R1B — FICHA DEL LIBRO
+════════════════════════════════════════════════ -->
+<div class="screen" id="s-r1b">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="nbar">
+    <span class="nbar-back" onclick="go('s-r1a')">‹ Descubrir</span>
+    <span style="font-size:13px;font-weight:700;">Ficha del libro</span>
+  </div>
+  <div class="content">
+    <div class="cov-lg">PORTADA</div>
+    <div class="d-title" id="r1b-t">El nombre del viento</div>
+    <div class="d-author" id="r1b-a">Patrick Rothfuss · 662 páginas</div>
+    <div class="d-tags" id="r1b-tags"></div>
+    <div class="stars-c" id="r1b-stars">★★★★ 4.3 · 234.567 valoraciones</div>
+
+    <div class="why">
+      <div class="why-t">¿Por qué te lo recomendamos?</div>
+      <div id="r1b-reason">Elegiste «Aventurero» y tienes en tu historial libros de fantasía épica con ritmo rápido.</div>
+    </div>
+
+    <div class="cw-wrap">
+      <div class="cw-h" onclick="toggleCW()">
+        <span>Contenido sensible <span style="font-size:10px;color:#aaa;">(18 lectores lo han indicado)</span></span>
+        <span id="cw-arr">+</span>
+      </div>
+      <div class="cw-b" id="cw-b">Violencia moderada · Referencias a muerte · Sin contenido sexual.</div>
+    </div>
+
+    <button class="btn btn-p" onclick="addBook()">Quiero leerlo</button>
+    <button class="btn" onclick="go('s-r1a')">No es para mí</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA R3A — MI LECTURA ACTUAL
+════════════════════════════════════════════════ -->
+<div class="screen" id="s-r3a">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="nbar">
+    <span class="nbar-title">Mi lectura</span>
+    <span class="nbar-action" onclick="go('s-r3d')">Estadísticas</span>
+  </div>
+  <div class="content">
+    <div class="stitle">Leyendo ahora</div>
+    <div class="rcard">
+      <div class="rcard-book">
+        <div class="cov-sm">PORT<br>ADA</div>
+        <div class="bi">
+          <div class="bt">El nombre del viento</div>
+          <div class="ba">Patrick Rothfuss</div>
+          <div class="prog-row">
+            <span id="r3a-pg">95 de 320 páginas</span>
+            <span id="r3a-pct" style="font-weight:700;">29%</span>
+          </div>
+          <div class="prog-track">
+            <div class="prog-fill" id="r3a-prog" style="width:29%;"></div>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-p" id="btn-cont" onclick="continuarLeyendo(this)">Continuar leyendo</button>
+      <div style="text-align:center;margin-top:4px;">
+        <span class="rem-edit" onclick="go('s-r3b')">Actualizar progreso manualmente</span>
+      </div>
+    </div>
+
+    <div class="rem-box">
+      <div class="rem-hdr">
+        <span class="rem-title">Recordatorio activo</span>
+        <div class="toggle on" onclick="this.classList.toggle('on')"></div>
+      </div>
+      <div class="rem-txt">
+        <span id="r3a-rem-d">Lun · Mié · Vie</span> a las <span id="r3a-rem-t">21:30</span>
+        <span class="rem-edit" onclick="go('s-r3c')">[editar]</span>
+      </div>
+    </div>
+
+    <div class="goal-box">
+      <div class="goal-ring">5/7</div>
+      <div class="goal-info">
+        <strong>Objetivo semanal</strong>
+        20 min al día<br>5 de 7 días cumplidos
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="bitem" onclick="go('s-home')"><span class="bicon">⌂</span>Inicio</div>
+    <div class="bitem" onclick="go('s-r1a')"><span class="bicon">◎</span>Descubrir</div>
+    <div class="bitem active"><span class="bicon">☰</span>Biblioteca</div>
+    <div class="bitem" onclick="go('s-r3d')"><span class="bicon">◷</span>Perfil</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA R3B — ACTUALIZAR PROGRESO
+════════════════════════════════════════════════ -->
+<div class="screen" id="s-r3b">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="nbar">
+    <span class="nbar-back" onclick="go('s-r3a')">‹ Mi lectura</span>
+    <span style="font-size:13px;font-weight:700;">Actualizar progreso</span>
+  </div>
+  <div class="content">
+    <div style="display:flex;gap:10px;align-items:center;border:1px solid #e0e0e0;background:#fafafa;padding:10px;border-radius:6px;margin-bottom:12px;">
+      <div class="cov-sm" style="width:34px;height:50px;">PORT<br>ADA</div>
+      <div>
+        <div style="font-weight:700;font-size:13px;">El nombre del viento</div>
+        <div style="font-size:11px;color:#888;">Actualmente en página <span id="r3b-cur">95</span> de 320</div>
+      </div>
+    </div>
+
+    <div class="stitle">¿Hasta qué página llegaste?</div>
+    <div class="pg-row">
+      <button class="pg-btn" onclick="chPg(-1)">−</button>
+      <div class="pg-div"></div>
+      <div class="pg-val">
+        <span id="pg-disp">110</span>
+        <span class="pg-unit" id="pg-unit">de 320 páginas</span>
+      </div>
+      <div class="pg-div"></div>
+      <button class="pg-btn" onclick="chPg(+1)">+</button>
+    </div>
+
+    <div class="mode-tog">
+      <div class="mode-opt active" id="m-pg" onclick="setMode('pages')">Páginas</div>
+      <div class="mode-opt" id="m-pct" onclick="setMode('pct')">Porcentaje</div>
+    </div>
+
+    <div class="note-lbl">Nota de sesión <span class="note-priv">🔒 solo tú la ves</span></div>
+    <textarea class="note-area" placeholder="¿Qué te pareció este fragmento?" rows="3"></textarea>
+
+    <button class="btn btn-p" onclick="saveProgress()">Guardar progreso</button>
+    <button class="btn btn-w" onclick="showModal()">He terminado el libro</button>
+  </div>
+
+  <div class="modal" id="modal-end">
+    <div class="msheet">
+      <div class="mhandle"></div>
+      <div class="mtitle">¿Has terminado el libro?</div>
+      <div class="mbody">Marcarás «El nombre del viento» como leído. Esta acción se puede deshacer desde tu biblioteca en cualquier momento.</div>
+      <button class="btn btn-p" onclick="confirmEnd()">Sí, he terminado</button>
+      <button class="btn" onclick="hideModal()">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA R3C — CONFIGURAR RECORDATORIO
+════════════════════════════════════════════════ -->
+<div class="screen" id="s-r3c">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="nbar">
+    <span class="nbar-back" onclick="saveReminder()">‹ Mi lectura</span>
+    <span style="font-size:13px;font-weight:700;">Recordatorio</span>
+  </div>
+  <div class="content">
+    <div style="border:1px solid #e0e0e0;background:#fafafa;padding:10px 12px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+      <span style="font-weight:700;font-size:13px;">Activar recordatorios</span>
+      <div class="toggle on" id="rem-tog" onclick="toggleRemForm(this)"></div>
+    </div>
+
+    <div id="rem-form">
+      <div class="stitle">Días de la semana</div>
+      <div class="days-row">
+        <div class="day active" onclick="toggleDay(this)">L</div>
+        <div class="day" onclick="toggleDay(this)">M</div>
+        <div class="day active" onclick="toggleDay(this)">X</div>
+        <div class="day" onclick="toggleDay(this)">J</div>
+        <div class="day active" onclick="toggleDay(this)">V</div>
+        <div class="day" onclick="toggleDay(this)">S</div>
+        <div class="day" onclick="toggleDay(this)">D</div>
+      </div>
+
+      <div class="stitle">Hora</div>
+      <div class="tpicker">
+        <div class="tunit">
+          <button class="tarr" onclick="chTime('h',1)">▲</button>
+          <div class="tval" id="t-h">21</div>
+          <div class="tlbl">hora</div>
+          <button class="tarr" onclick="chTime('h',-1)">▼</button>
+        </div>
+        <div class="tcolon">:</div>
+        <div class="tunit">
+          <button class="tarr" onclick="chTime('m',1)">▲</button>
+          <div class="tval" id="t-m">30</div>
+          <div class="tlbl">min</div>
+          <button class="tarr" onclick="chTime('m',-1)">▼</button>
+        </div>
+      </div>
+
+      <div class="nprev">
+        <div class="nprev-lbl">Vista previa de la notificación</div>
+        <div class="ncard">
+          <div class="ncard-t">📚 Hora de leer</div>
+          <div class="ncard-b">Llevas 3 días sin leer «El nombre del viento». ¿Continuamos donde lo dejaste?</div>
+        </div>
+        <div class="nprev-sub">Días: <span id="prev-days">Lun, Mié, Vie</span> · Hora: <span id="prev-time">21:30</span></div>
+      </div>
+    </div>
+
+    <button class="btn btn-p" onclick="saveReminder()">Guardar recordatorio</button>
+    <button class="btn" onclick="go('s-r3a')">Cancelar</button>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PANTALLA R3D — MIS ESTADÍSTICAS
+════════════════════════════════════════════════ -->
+<div class="screen" id="s-r3d">
+  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+  <div class="nbar">
+    <span class="nbar-back" onclick="go('s-r3a')">‹ Mi lectura</span>
+    <span style="font-size:13px;font-weight:700;">Mis estadísticas</span>
+  </div>
+  <div class="content">
+    <div class="stitle">Este año</div>
+    <div class="sgrid">
+      <div class="scard"><span class="sval">7</span><div class="slbl">Libros completados</div><div class="ssub">+2 vs. año anterior</div></div>
+      <div class="scard"><span class="sval">2.340</span><div class="slbl">Páginas leídas</div><div class="ssub">~58 páginas/día</div></div>
+    </div>
+
+    <div class="stitle">Géneros más leídos</div>
+    <div style="margin-bottom:10px;">
+      <div class="bar-row"><span class="bar-lbl">Fantasía</span><div class="bar-track"><div class="bar-fill" style="width:42%;"></div></div><span class="bar-pct">42%</span></div>
+      <div class="bar-row"><span class="bar-lbl">Literatura</span><div class="bar-track"><div class="bar-fill" style="width:28%;"></div></div><span class="bar-pct">28%</span></div>
+      <div class="bar-row"><span class="bar-lbl">Ciencia ficción</span><div class="bar-track"><div class="bar-fill" style="width:18%;"></div></div><span class="bar-pct">18%</span></div>
+      <div class="bar-row"><span class="bar-lbl">Otros</span><div class="bar-track"><div class="bar-fill" style="width:12%;"></div></div><span class="bar-pct">12%</span></div>
+    </div>
+
+    <div style="border:1px solid #e0e0e0;background:#fafafa;padding:10px;border-radius:6px;margin-bottom:12px;">
+      <div style="font-size:12px;color:#555;">Tu ritmo habitual: <strong>Medio-rápido</strong></div>
+      <div style="font-size:11px;color:#888;margin-top:2px;">El 70% de tus libros tienen ritmo medio o rápido.</div>
+    </div>
+
+    <div class="stitle">Funciones avanzadas <span style="font-size:10px;font-weight:400;color:#aaa;">· Toca para ver detalles</span></div>
+
+    <div class="plus-card">
+      <div class="plus-hdr" onclick="togglePlus('pc-1','pa-1')">
+        <span class="plus-t">Comparar períodos</span>
+        <span><span class="plus-badge">PLUS</span> <span id="pa-1">▾</span></span>
+      </div>
+      <div class="plus-body" id="pc-1">
+        Compara tus lecturas de un año frente a otro: páginas, géneros, ritmo y autores por períodos personalizados.<br><br>
+        <button class="btn btn-sm" style="margin-bottom:0;" onclick="alert('Función disponible con el plan Plus.')">Ver planes Plus</button>
+      </div>
+    </div>
+
+    <div class="plus-card">
+      <div class="plus-hdr" onclick="togglePlus('pc-2','pa-2')">
+        <span class="plus-t">Gráficos personalizados</span>
+        <span><span class="plus-badge">PLUS</span> <span id="pa-2">▾</span></span>
+      </div>
+      <div class="plus-body" id="pc-2">
+        Crea gráficos de tarta o barras usando tus propias etiquetas o rangos de longitud de libro.<br><br>
+        <button class="btn btn-sm" style="margin-bottom:0;" onclick="alert('Función disponible con el plan Plus.')">Ver planes Plus</button>
+      </div>
+    </div>
+  </div>
+  <div class="bnav">
+    <div class="bitem" onclick="go('s-home')"><span class="bicon">⌂</span>Inicio</div>
+    <div class="bitem" onclick="go('s-r1a')"><span class="bicon">◎</span>Descubrir</div>
+    <div class="bitem" onclick="go('s-r3a')"><span class="bicon">☰</span>Biblioteca</div>
+    <div class="bitem active"><span class="bicon">◷</span>Perfil</div>
+  </div>
+</div>
+
+</div><!-- /phone -->
+
+<script>
+/* ── NAVIGATION ── */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+/* ── BOOK DATA ── */
+const books={
+  aventurero:[
+    {t:'El nombre del viento',a:'Patrick Rothfuss',p:'662 pág.',tags:['Aventurero','Fantasía épica','Ritmo rápido'],stars:'★★★★ 4.3',r:'Elegiste «Aventurero» y tienes libros de fantasía épica en tu historial.'},
+    {t:'Eragon',a:'Christopher Paolini',p:'503 pág.',tags:['Aventura','Fantasía','Ritmo rápido'],stars:'★★★★ 4.1',r:'Popular entre lectores con tu perfil de géneros.'}
+  ],
+  reflexivo:[
+    {t:'Sapiens',a:'Yuval Noah Harari',p:'496 pág.',tags:['Reflexivo','No ficción','Historia'],stars:'★★★★★ 4.7',r:'Elegiste «Reflexivo» y valoras los libros de ritmo pausado.'},
+    {t:'El monje que vendió su Ferrari',a:'Robin Sharma',p:'224 pág.',tags:['Reflexivo','Autoayuda'],stars:'★★★ 3.8',r:'Coincide con tus preferencias de lectura de fin de semana.'}
+  ],
+  misterioso:[
+    {t:'La sombra del viento',a:'Carlos Ruiz Zafón',p:'560 pág.',tags:['Misterioso','Literatura','Ritmo medio'],stars:'★★★★★ 4.8',r:'Similar a tus últimas lecturas de misterio.'},
+    {t:'El código Da Vinci',a:'Dan Brown',p:'489 pág.',tags:['Thriller','Misterioso'],stars:'★★★★ 4.0',r:'Muy valorado por lectores con tu historial de géneros.'}
+  ],
+  emotivo:[
+    {t:'Bajo la misma estrella',a:'John Green',p:'313 pág.',tags:['Emotivo','Drama','Romance'],stars:'★★★★ 4.2',r:'Elegiste «Emotivo» y tienes libros de drama en tu historial.'},
+    {t:'El alquimista',a:'Paulo Coelho',p:'208 pág.',tags:['Emotivo','Filosófico'],stars:'★★★★ 4.1',r:'Muy leído por usuarios con perfil similar al tuyo.'}
+  ],
+  oscuro:[
+    {t:'It',a:'Stephen King',p:'1.138 pág.',tags:['Oscuro','Terror','Suspense'],stars:'★★★★ 4.4',r:'Elegiste «Oscuro» y has leído otros títulos de Stephen King.'},
+    {t:'La carretera',a:'Cormac McCarthy',p:'287 pág.',tags:['Oscuro','Distopía'],stars:'★★★★ 4.3',r:'Recomendado por su atmósfera oscura y ritmo intenso.'}
+  ],
+  relajante:[
+    {t:'Crónica de una muerte anunciada',a:'Gabriel García Márquez',p:'128 pág.',tags:['Relajante','Realismo mágico'],stars:'★★★★★ 4.6',r:'Elegiste «Relajante» y disfrutas del realismo mágico.'},
+    {t:'El principito',a:'Antoine de Saint-Exupéry',p:'96 pág.',tags:['Relajante','Clásico','Breve'],stars:'★★★★★ 4.7',r:'Lectura breve y serena, perfecta para tu objetivo semanal.'}
+  ]
+};
+
+let curMood='aventurero', addedIdx=-1, toastTimer=null, bookToAdd=0;
+
+function renderBooks(mood,added){
+  const list=document.getElementById('book-list');
+  list.innerHTML='';
+  (books[mood]||books.aventurero).forEach((b,i)=>{
+    const dim=i===added;
+    const el=document.createElement('div');
+    el.className='bcard'+(dim?' dimmed':'');
+    el.innerHTML=`
+      <div class="cov-sm">PORT<br>ADA</div>
+      <div class="bi">
+        <div class="bt">${b.t}</div>
+        <div class="ba">${b.a} · ${b.p}</div>
+        <div class="btags">${b.tags.map(t=>`<span class="btag">${t}</span>`).join('')}</div>
+        <div class="bstars">${b.stars}</div>
+        <div class="breason">${b.r}</div>
+        ${dim?'<div class="added-lbl">✓ Añadido a «Quiero leer»</div>':''}
+      </div>`;
+    if(!dim) el.onclick=()=>openBook(i);
+    list.appendChild(el);
+  });
+}
+
+function selectMood(el){
+  document.querySelectorAll('#mood-chips .chip').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  curMood=el.dataset.mood;
+  addedIdx=-1;
+  renderBooks(curMood,-1);
+}
+
+function openBook(i){
+  const b=books[curMood][i];
+  bookToAdd=i;
+  document.getElementById('r1b-t').textContent=b.t;
+  document.getElementById('r1b-a').textContent=b.a+' · '+b.p;
+  document.getElementById('r1b-tags').innerHTML=b.tags.map(t=>`<span class="btag">${t}</span>`).join('');
+  document.getElementById('r1b-stars').textContent=b.stars+' valoraciones';
+  document.getElementById('r1b-reason').textContent=b.r;
+  document.getElementById('cw-b').style.display='none';
+  document.getElementById('cw-arr').textContent='+';
+  go('s-r1b');
+}
+
+function addBook(){
+  addedIdx=bookToAdd;
+  renderBooks(curMood,addedIdx);
+  go('s-r1a');
+  const toast=document.getElementById('toast-r1');
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>toast.classList.remove('show'),5000);
+}
+
+function undoAdd(){
+  clearTimeout(toastTimer);
+  document.getElementById('toast-r1').classList.remove('show');
+  addedIdx=-1;
+  renderBooks(curMood,-1);
+}
+
+function toggleCW(){
+  const b=document.getElementById('cw-b'),a=document.getElementById('cw-arr');
+  const open=b.style.display==='block';
+  b.style.display=open?'none':'block';
+  a.textContent=open?'+':'−';
+}
+
+/* ── R3A ── */
+function continuarLeyendo(btn){
+  btn.textContent='Cargando...';
+  setTimeout(()=>btn.textContent='Continuar leyendo',1200);
+}
+
+/* ── R3B ── */
+let pgVal=110; const pgTotal=320; let pgMode='pages';
+
+function chPg(d){
+  pgVal=Math.min(pgTotal,Math.max(1,pgVal+d));
+  updPg();
+}
+function setMode(m){
+  pgMode=m;
+  document.getElementById('m-pg').classList.toggle('active',m==='pages');
+  document.getElementById('m-pct').classList.toggle('active',m==='pct');
+  updPg();
+}
+function updPg(){
+  const disp=document.getElementById('pg-disp'),unit=document.getElementById('pg-unit');
+  if(pgMode==='pages'){disp.textContent=pgVal;unit.textContent='de '+pgTotal+' páginas';}
+  else{disp.textContent=Math.round(pgVal/pgTotal*100)+'%';unit.textContent='';}
+}
+function showModal(){document.getElementById('modal-end').classList.add('show');}
+function hideModal(){document.getElementById('modal-end').classList.remove('show');}
+function confirmEnd(){
+  hideModal();
+  updateProgress(pgTotal);
+  go('s-r3a');
+}
+function saveProgress(){
+  updateProgress(pgVal);
+  document.getElementById('r3b-cur').textContent=pgVal;
+  go('s-r3a');
+}
+function updateProgress(pg){
+  const pct=Math.round(pg/pgTotal*100);
+  const pctStr=pct+'%';
+  const pgStr=pg+' de '+pgTotal+' páginas';
+  document.getElementById('r3a-prog').style.width=pctStr;
+  document.getElementById('r3a-pct').textContent=pctStr;
+  document.getElementById('r3a-pg').textContent=pgStr;
+  document.getElementById('h-prog').style.width=pctStr;
+  document.getElementById('h-pct').textContent=pctStr;
+  document.getElementById('h-pages').textContent=pgStr;
+}
+
+/* ── R3C ── */
+let rH=21,rM=30;
+const dayMap={'L':'Lun','M':'Mar','X':'Mié','J':'Jue','V':'Vie','S':'Sáb','D':'Dom'};
+
+function toggleRemForm(el){
+  el.classList.toggle('on');
+  const form=document.getElementById('rem-form');
+  const on=el.classList.contains('on');
+  form.style.opacity=on?'1':'0.4';
+  form.style.pointerEvents=on?'':'none';
+}
+function toggleDay(el){
+  el.classList.toggle('active');
+  updPrev();
+}
+function chTime(type,d){
+  if(type==='h'){rH=(rH+d+24)%24;document.getElementById('t-h').textContent=String(rH).padStart(2,'0');}
+  else{rM=((rM+d*30)%60+60)%60;document.getElementById('t-m').textContent=String(rM).padStart(2,'0');}
+  updPrev();
+}
+function updPrev(){
+  const days=[...document.querySelectorAll('#s-r3c .day.active')].map(d=>dayMap[d.textContent]||d.textContent);
+  const ts=String(rH).padStart(2,'0')+':'+String(rM).padStart(2,'0');
+  document.getElementById('prev-days').textContent=days.join(', ')||'—';
+  document.getElementById('prev-time').textContent=ts;
+}
+function saveReminder(){
+  const days=[...document.querySelectorAll('#s-r3c .day.active')].map(d=>dayMap[d.textContent]||d.textContent);
+  const ts=String(rH).padStart(2,'0')+':'+String(rM).padStart(2,'0');
+  document.getElementById('r3a-rem-d').textContent=days.join(' · ')||'—';
+  document.getElementById('r3a-rem-t').textContent=ts;
+  go('s-r3a');
+}
+
+/* ── R3D ── */
+function togglePlus(bodyId,arrId){
+  const body=document.getElementById(bodyId);
+  const arr=document.getElementById(arrId);
+  const open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  arr.textContent=open?'▾':'▴';
+}
+
+/* ── INIT ── */
+renderBooks('aventurero',-1);
+</script>
+</body>
+</html>
