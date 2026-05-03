@@ -43,13 +43,6 @@ body{
 }
 .screen.active{display:flex;}
 
-/* STATUS BAR */
-.sbar{
-  background:#111;color:#fff;
-  padding:6px 14px;font-size:11px;
-  display:flex;justify-content:space-between;align-items:center;
-  flex-shrink:0;
-}
 
 /* NAV BAR */
 .nbar{
@@ -282,7 +275,7 @@ body{
      PANTALLA 0 — HOME
 ════════════════════════════════════════════════ -->
 <div class="screen active" id="s-home">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="content">
     <div class="home-logo">
       <div class="hlogo-m">LÉ</div>
@@ -333,7 +326,7 @@ body{
      PANTALLA R1A — DESCUBRIR
 ════════════════════════════════════════════════ -->
 <div class="screen" id="s-r1a">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="nbar">
     <span class="nbar-title">Descubrir</span>
     <span class="nbar-action">🔍</span>
@@ -379,7 +372,7 @@ body{
      PANTALLA R1B — FICHA DEL LIBRO
 ════════════════════════════════════════════════ -->
 <div class="screen" id="s-r1b">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="nbar">
     <span class="nbar-back" onclick="go('s-r1a')">‹ Descubrir</span>
     <span style="font-size:13px;font-weight:700;">Ficha del libro</span>
@@ -414,7 +407,7 @@ body{
      PANTALLA R3A — MI LECTURA ACTUAL
 ════════════════════════════════════════════════ -->
 <div class="screen" id="s-r3a">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="nbar">
     <span class="nbar-title">Mi lectura</span>
     <span class="nbar-action" onclick="go('s-r3d')">Estadísticas</span>
@@ -474,7 +467,7 @@ body{
      PANTALLA R3B — ACTUALIZAR PROGRESO
 ════════════════════════════════════════════════ -->
 <div class="screen" id="s-r3b">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="nbar">
     <span class="nbar-back" onclick="go('s-r3a')">‹ Mi lectura</span>
     <span style="font-size:13px;font-weight:700;">Actualizar progreso</span>
@@ -528,7 +521,7 @@ body{
      PANTALLA R3C — CONFIGURAR RECORDATORIO
 ════════════════════════════════════════════════ -->
 <div class="screen" id="s-r3c">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="nbar">
     <span class="nbar-back" onclick="saveReminder()">‹ Mi lectura</span>
     <span style="font-size:13px;font-weight:700;">Recordatorio</span>
@@ -588,7 +581,7 @@ body{
      PANTALLA R3D — MIS ESTADÍSTICAS
 ════════════════════════════════════════════════ -->
 <div class="screen" id="s-r3d">
-  <div class="sbar"><span>9:41</span><span>●●▲ 100%</span></div>
+
   <div class="nbar">
     <span class="nbar-back" onclick="go('s-r3a')">‹ Mi lectura</span>
     <span style="font-size:13px;font-weight:700;">Mis estadísticas</span>
