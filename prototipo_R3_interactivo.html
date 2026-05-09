@@ -286,10 +286,10 @@ body{
     <div class="hcur" onclick="go('s-r3a')">
       <div class="cov-sm" style="width:40px;height:56px;">PORT<br>ADA</div>
       <div style="flex:1;">
-        <div class="bt">El nombre del viento</div>
-        <div class="ba">Patrick Rothfuss</div>
+        <div class="bt">El capitán Alatriste</div>
+        <div class="ba">Arturo Pérez-Reverte</div>
         <div class="prog-row" style="margin-top:4px;margin-bottom:3px;">
-          <span id="h-pages">95 de 320 páginas</span>
+          <span id="h-pages">65 de 224 páginas</span>
           <span id="h-pct" style="font-weight:700;">29%</span>
         </div>
         <div class="prog-track" style="margin-bottom:0;">
@@ -379,14 +379,14 @@ body{
   </div>
   <div class="content">
     <div class="cov-lg">PORTADA</div>
-    <div class="d-title" id="r1b-t">El nombre del viento</div>
-    <div class="d-author" id="r1b-a">Patrick Rothfuss · 662 páginas</div>
+    <div class="d-title" id="r1b-t">El capitán Alatriste</div>
+    <div class="d-author" id="r1b-a">Arturo Pérez-Reverte · 224 páginas</div>
     <div class="d-tags" id="r1b-tags"></div>
     <div class="stars-c" id="r1b-stars">★★★★ 4.3 · 234.567 valoraciones</div>
 
     <div class="why">
       <div class="why-t">¿Por qué te lo recomendamos?</div>
-      <div id="r1b-reason">Elegiste «Aventurero» y tienes en tu historial libros de fantasía épica con ritmo rápido.</div>
+      <div id="r1b-reason">Elegiste «Aventurero» y tienes en tu historial libros de aventura histórica con ritmo rápido.</div>
     </div>
 
     <div class="cw-wrap">
@@ -418,10 +418,10 @@ body{
       <div class="rcard-book">
         <div class="cov-sm">PORT<br>ADA</div>
         <div class="bi">
-          <div class="bt">El nombre del viento</div>
-          <div class="ba">Patrick Rothfuss</div>
+          <div class="bt">El capitán Alatriste</div>
+          <div class="ba">Arturo Pérez-Reverte</div>
           <div class="prog-row">
-            <span id="r3a-pg">95 de 320 páginas</span>
+            <span id="r3a-pg">65 de 224 páginas</span>
             <span id="r3a-pct" style="font-weight:700;">29%</span>
           </div>
           <div class="prog-track">
@@ -476,8 +476,8 @@ body{
     <div style="display:flex;gap:10px;align-items:center;border:1px solid #e0e0e0;background:#fafafa;padding:10px;border-radius:6px;margin-bottom:12px;">
       <div class="cov-sm" style="width:34px;height:50px;">PORT<br>ADA</div>
       <div>
-        <div style="font-weight:700;font-size:13px;">El nombre del viento</div>
-        <div style="font-size:11px;color:#888;">Actualmente en página <span id="r3b-cur">95</span> de 320</div>
+        <div style="font-weight:700;font-size:13px;">El capitán Alatriste</div>
+        <div style="font-size:11px;color:#888;">Actualmente en página <span id="r3b-cur">65</span> de 224</div>
       </div>
     </div>
 
@@ -486,8 +486,8 @@ body{
       <button class="pg-btn" onclick="chPg(-1)">−</button>
       <div class="pg-div"></div>
       <div class="pg-val">
-        <span id="pg-disp">110</span>
-        <span class="pg-unit" id="pg-unit">de 320 páginas</span>
+        <span id="pg-disp">80</span>
+        <span class="pg-unit" id="pg-unit">de 224 páginas</span>
       </div>
       <div class="pg-div"></div>
       <button class="pg-btn" onclick="chPg(+1)">+</button>
@@ -509,7 +509,7 @@ body{
     <div class="msheet">
       <div class="mhandle"></div>
       <div class="mtitle">¿Has terminado el libro?</div>
-      <div class="mbody">Marcarás «El nombre del viento» como leído. Esta acción se puede deshacer desde tu biblioteca en cualquier momento.</div>
+      <div class="mbody">Marcarás «El capitán Alatriste» como leído. Esta acción se puede deshacer desde tu biblioteca en cualquier momento.</div>
       <button class="btn btn-p" onclick="confirmEnd()">Sí, he terminado</button>
       <button class="btn" onclick="hideModal()">Cancelar</button>
     </div>
@@ -565,7 +565,7 @@ body{
         <div class="nprev-lbl">Vista previa de la notificación</div>
         <div class="ncard">
           <div class="ncard-t">📚 Hora de leer</div>
-          <div class="ncard-b">Llevas 3 días sin leer «El nombre del viento». ¿Continuamos donde lo dejaste?</div>
+          <div class="ncard-b">Llevas 3 días sin leer «El capitán Alatriste». ¿Continuamos donde lo dejaste?</div>
         </div>
         <div class="nprev-sub">Días: <span id="prev-days">Lun, Mié, Vie</span> · Hora: <span id="prev-time">21:30</span></div>
       </div>
@@ -652,28 +652,28 @@ function go(id){
 /* ── BOOK DATA ── */
 const books={
   aventurero:[
-    {t:'El nombre del viento',a:'Patrick Rothfuss',p:'662 pág.',tags:['Aventurero','Fantasía épica','Ritmo rápido'],stars:'★★★★ 4.3',r:'Elegiste «Aventurero» y tienes libros de fantasía épica en tu historial.'},
-    {t:'Eragon',a:'Christopher Paolini',p:'503 pág.',tags:['Aventura','Fantasía','Ritmo rápido'],stars:'★★★★ 4.1',r:'Popular entre lectores con tu perfil de géneros.'}
+    {t:'El capitán Alatriste',a:'Arturo Pérez-Reverte',p:'224 pág.',tags:['Aventurero','Aventura histórica','Ritmo rápido'],stars:'★★★★ 4.3',r:'Elegiste «Aventurero» y tienes libros de aventura histórica en tu historial.'},
+    {t:'Las memorias de Idhún',a:'Laura Gallego García',p:'544 pág.',tags:['Aventura','Fantasía','Ritmo rápido'],stars:'★★★★ 4.1',r:'Popular entre lectores con tu perfil de géneros.'}
   ],
   reflexivo:[
-    {t:'Sapiens',a:'Yuval Noah Harari',p:'496 pág.',tags:['Reflexivo','No ficción','Historia'],stars:'★★★★★ 4.7',r:'Elegiste «Reflexivo» y valoras los libros de ritmo pausado.'},
-    {t:'El monje que vendió su Ferrari',a:'Robin Sharma',p:'224 pág.',tags:['Reflexivo','Autoayuda'],stars:'★★★ 3.8',r:'Coincide con tus preferencias de lectura de fin de semana.'}
+    {t:'El infinito en un junco',a:'Irene Vallejo',p:'416 pág.',tags:['Reflexivo','No ficción','Historia'],stars:'★★★★★ 4.7',r:'Elegiste «Reflexivo» y valoras los libros de ritmo pausado.'},
+    {t:'La España vacía',a:'Sergio del Molino',p:'272 pág.',tags:['Reflexivo','Ensayo','No ficción'],stars:'★★★★ 4.0',r:'Coincide con tus preferencias de lectura de fin de semana.'}
   ],
   misterioso:[
     {t:'La sombra del viento',a:'Carlos Ruiz Zafón',p:'560 pág.',tags:['Misterioso','Literatura','Ritmo medio'],stars:'★★★★★ 4.8',r:'Similar a tus últimas lecturas de misterio.'},
-    {t:'El código Da Vinci',a:'Dan Brown',p:'489 pág.',tags:['Thriller','Misterioso'],stars:'★★★★ 4.0',r:'Muy valorado por lectores con tu historial de géneros.'}
+    {t:'El club Dumas',a:'Arturo Pérez-Reverte',p:'456 pág.',tags:['Thriller','Misterioso'],stars:'★★★★ 4.2',r:'Muy valorado por lectores con tu historial de géneros.'}
   ],
   emotivo:[
-    {t:'Bajo la misma estrella',a:'John Green',p:'313 pág.',tags:['Emotivo','Drama','Romance'],stars:'★★★★ 4.2',r:'Elegiste «Emotivo» y tienes libros de drama en tu historial.'},
-    {t:'El alquimista',a:'Paulo Coelho',p:'208 pág.',tags:['Emotivo','Filosófico'],stars:'★★★★ 4.1',r:'Muy leído por usuarios con perfil similar al tuyo.'}
+    {t:'El tiempo entre costuras',a:'María Dueñas',p:'615 pág.',tags:['Emotivo','Drama','Romance'],stars:'★★★★ 4.3',r:'Elegiste «Emotivo» y tienes libros de drama en tu historial.'},
+    {t:'La voz dormida',a:'Dulce Chacón',p:'380 pág.',tags:['Emotivo','Drama','Histórico'],stars:'★★★★ 4.2',r:'Muy leído por usuarios con perfil similar al tuyo.'}
   ],
   oscuro:[
-    {t:'It',a:'Stephen King',p:'1.138 pág.',tags:['Oscuro','Terror','Suspense'],stars:'★★★★ 4.4',r:'Elegiste «Oscuro» y has leído otros títulos de Stephen King.'},
-    {t:'La carretera',a:'Cormac McCarthy',p:'287 pág.',tags:['Oscuro','Distopía'],stars:'★★★★ 4.3',r:'Recomendado por su atmósfera oscura y ritmo intenso.'}
+    {t:'Los renglones torcidos de Dios',a:'Torcuato Luca de Tena',p:'348 pág.',tags:['Oscuro','Psicológico','Suspense'],stars:'★★★★ 4.4',r:'Elegiste «Oscuro» y tienes en tu historial thrillers psicológicos.'},
+    {t:'Plenilunio',a:'Antonio Muñoz Molina',p:'424 pág.',tags:['Oscuro','Thriller','Suspense'],stars:'★★★★ 4.3',r:'Recomendado por su atmósfera oscura y ritmo intenso.'}
   ],
   relajante:[
     {t:'Crónica de una muerte anunciada',a:'Gabriel García Márquez',p:'128 pág.',tags:['Relajante','Realismo mágico'],stars:'★★★★★ 4.6',r:'Elegiste «Relajante» y disfrutas del realismo mágico.'},
-    {t:'El principito',a:'Antoine de Saint-Exupéry',p:'96 pág.',tags:['Relajante','Clásico','Breve'],stars:'★★★★★ 4.7',r:'Lectura breve y serena, perfecta para tu objetivo semanal.'}
+    {t:'Platero y yo',a:'Juan Ramón Jiménez',p:'144 pág.',tags:['Relajante','Clásico','Breve'],stars:'★★★★★ 4.7',r:'Lectura breve y serena, perfecta para tu objetivo semanal.'}
   ]
 };
 
